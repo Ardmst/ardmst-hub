@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   description: "Rifkhi Ardi Mustaqim — Fullstack Developer & Game Creator. Portfolio, links and contact at ardmst.my.id.",
   keywords: ["Ardmst", "Rifkhi Ardi Mustaqim", "Fullstack Developer", "Game Creator", "Portfolio"],
   authors: [{ name: SITE.fullName }],
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+    shortcut: "/icon.svg",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
