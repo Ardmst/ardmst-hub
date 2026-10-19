@@ -29,7 +29,7 @@ export default function Page() {
             <span className="flex size-8 items-center justify-center rounded-md border border-edge bg-surface text-accent">
               <Terminal className="size-4" />
             </span>
-            <span className="font-mono text-sm tracking-tight text-fg">ardmst<span className="text-accent">.dev</span></span>
+            <span className="font-mono text-sm tracking-tight text-fg">ardmst<span className="text-accent">.my.id</span></span>
           </Link>
           <a href={`mailto:${SITE.email}`} className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-edge bg-surface px-3 py-1.5 font-mono text-xs text-fg-muted transition-colors hover:border-accent/50 hover:text-accent-soft">
             <Mail className="size-3.5" /> {SITE.email}
@@ -45,7 +45,7 @@ export default function Page() {
           </motion.div>
 
           <motion.p {...reveal(0.06)} className="mt-5 font-mono text-sm tracking-widest text-accent-soft">
-            &gt;_ ardmst.dev
+            &gt;_ ardmst.my.id
           </motion.p>
 
           <motion.h1 {...reveal(0.12)} className="mt-3 font-display text-4xl font-bold tracking-tight text-fg sm:text-5xl">
@@ -53,7 +53,7 @@ export default function Page() {
           </motion.h1>
 
           <motion.p {...reveal(0.18)} className="mt-3 font-display text-lg font-medium text-fg-muted sm:text-xl">
-            {SITE.role}
+            Fullstack Developer & Game Creator — {SITE.domain}
           </motion.p>
 
           <motion.p {...reveal(0.22)} className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-fg-muted">
@@ -100,8 +100,8 @@ export default function Page() {
               </motion.div>
             ))}
           </motion.div>
-          <p className="mt-4 text-center font-mono text-xs text-fg-subtle">
-            Add future projects by editing <code className="rounded border border-edge bg-elevated px-1 py-0.5">src/lib/site.ts → LINKS</code>
+          <p className="hidden" aria-hidden="true">
+            Add future projects by editing src/lib/site.ts → LINKS
           </p>
         </section>
       </main>
@@ -113,9 +113,9 @@ export default function Page() {
             <div className="space-y-2">
               <span className="flex items-center gap-2.5">
                 <span className="flex size-8 items-center justify-center rounded-md border border-edge bg-surface text-accent"><Terminal className="size-4" /></span>
-                <span className="font-mono text-sm text-fg">ardmst<span className="text-accent">.dev</span></span>
+                <span className="font-mono text-sm text-fg">ardmst<span className="text-accent">.my.id</span></span>
               </span>
-              <p className="max-w-sm text-xs leading-relaxed text-fg-subtle">{SITE.role} — {SITE.domain}</p>
+              <p className="max-w-sm text-xs leading-relaxed text-fg-subtle">Fullstack Developer & Game Creator — {SITE.domain}</p>
             </div>
             <div className="flex flex-wrap gap-2 font-mono text-xs">
               <a href="https://github.com/Ardmst" target="_blank" rel="noopener noreferrer" className="rounded-md border border-edge bg-void px-3 py-1.5 text-fg-muted hover:border-accent/40 hover:text-accent-soft">GitHub</a>
