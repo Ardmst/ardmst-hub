@@ -1,0 +1,8 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="1024" height="1024" role="img" aria-label="Ardmst shield">
+  <!-- shield frame: rounded top + pointed bottom, stroke #3B82F6 fill #09090B -->
+  <path d="M50 91 L14.5 67.5 L14.5 20 Q14.5 9 25.5 9 L74.5 9 Q85.5 9 85.5 20 L85.5 67.5 Z" fill="#09090B" stroke="#3B82F6" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- solid diagonal -->
+  <path d="M19.5 37.5 L81.5 65.5" stroke="#3B82F6" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- wavy diagonal: straight + single wave bump -->
+  <path d="M17.5 53.5 L37 63 Q44 72 51 63 L81 79" stroke="#3B82F6" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
