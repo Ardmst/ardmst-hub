@@ -1,84 +1,80 @@
 # ardmst-hub — ardmst.my.id
 
-Single-page link aggregator for **ardmst.my.id** (Vercel Option B).
+The door to every site by Rifkhi Ardi Mustaqim (ardmst): his portfolio, his private tools,
+GitHub, LinkedIn and email. One static page. Project demos are not shown here; they live in
+the portfolio (`portofolio.ardmst.my.id`).
 
 ## Stack
-Next.js 15 App Router · Tailwind 4 · Framer Motion · lucide-react
 
-## Design tokens (from MyPortofolio)
-`#09090B` void / `#141417` surface / `#27272A` edge · `#3B82F6` Electric Blue accent · Inter + Space Grotesk + JetBrains Mono · `shadow-[0_0_25px_rgba(59,130,246,0.25)]` hover glow · `grid-backdrop` + `animate-glow-pulse`
+Next.js 15 (App Router), React 19, plain CSS. No Tailwind, no animation library, no icon library.
+The page is a server component and is prerendered; the only client code is the shared
+"sheet and biro" kit (about 5 kB), mounted by `src/components/SheetKit.tsx`.
 
-## Edit links
-`src/lib/site.ts` → `LINKS` array. Each item: `title`, `href`, `description`, `badge`, `accent`, `external`. Use `href: "#"` for coming-soon (rendered disabled).
+## Where things are
 
-## Local dev
+| Path | What |
+|---|---|
+| `src/lib/site.ts` | All copy and the list of doors (`LINKS`). |
+| `src/app/page.tsx` | The page: first screen, doors, close. |
+| `src/app/layout.tsx` | Fonts, metadata, the head script (`js` class, stored theme). |
+| `src/styles/theme.css`, `sheet-kit.css` | Shared with the portfolio. Verbatim copies of `../shared/`: do not edit here. |
+| `src/lib/sheet-kit.js`, `.d.ts` | The shared interaction kit. Verbatim copy: do not edit here. |
+| `src/styles/site.css` | This site's own rules. |
+| `src/app/opengraph-image.tsx`, `robots.ts`, `sitemap.ts`, `icon.svg`, `apple-icon.png` | Share picture, crawler files, icons. |
+| `scripts/make-pictures.mjs` | Builds the portrait, the door pictures and `apple-icon.png`. |
+
+## Add another site
+
+Add one entry to `LINKS` in `src/lib/site.ts`:
+
+```ts
+{
+  name: "Portfolio",                       // one or two words, set in capitals
+  href: "https://portofolio.ardmst.my.id",
+  note: "The work, and demos you can open", // say so when it needs a sign-in
+  picture: { src: "/doors/portfolio.webp", alt: "What the picture shows" },
+  newTab: true,                            // for anything outside these two sites
+}
+```
+
+The picture is a 640x400 (16:10) WebP in `public/doors/`. It is shown in the row on every
+screen and, on a mouse, held larger by the pointer. To build one from a screenshot, add a
+line to `scripts/make-pictures.mjs` and run `npm run pictures`. The script reads its sources
+from the workspace folders beside this repo (`../media/`, `../portofolio/public/profile.jpg`);
+the built pictures are committed, so the site builds without them.
+
+Never publish a picture that shows a credential. The 9Router sign-in screen prints its default
+password; the picture here is cropped above that line.
+
+## The name is fitted by measurement
+
+ARDMST runs from margin to margin. `site.css` sizes it as `box width / --name-fit`, where
+`--name-fit: 2.285` is the width of the word's ink in em (Bebas Neue, letter-spacing -0.035em),
+and pulls it left by `--name-left: 0.0125em`, the first letter's side bearing. Both were measured
+by drawing the word on a canvas and scanning the pixels. A different word or face needs new numbers.
+
+Bebas Neue is loaded with `next/font/local` from `@fontsource/bebas-neue`, with its ascent and
+descent overridden to the capitals (70% and 10%). The face declares a much taller box than its
+letters; at 600px that invisible box covered the sentence and the button above the name and
+took their clicks. The override does not move any baseline.
+
+## Commands
+
 ```
 npm install
-npm run dev    # http://localhost:3000
-npm run build  # static output, 159kB first load
+npm run dev        # http://localhost:3000
+npm run build      # static output
+npm run start
+npm run lint       # eslint
+npm run typecheck  # tsc --noEmit
+npm run pictures   # rebuild public/doors/*, public/portrait-*, src/app/apple-icon.png
 ```
 
-## Deploy — Vercel Option B
+No environment variables are needed.
 
-### Two Vercel projects
+## Deploy
 
-| Project | Repo | Domain | Framework |
-|---------|------|--------|-----------|
-| `ardmst-hub` | `Ardmst/ardmst-hub` (this repo) | `ardmst.my.id` | Next.js |
-| `MyPortofolio` | `Ardmst/MyPortofolio` @ `e879d4f` | `portofolio.ardmst.my.id` | Next.js |
-
-### Cloudflare DNS (domain registrar = Cloudflare)
-
-| Type | Name | Content | Proxy | Purpose |
-|------|------|---------|-------|---------|
-| CNAME | `ardmst.my.id` | `cname.vercel-dns.com` | Proxied (orange) | ardmst-hub |
-| CNAME | `portofolio` | `cname.vercel-dns.com` | Proxied (orange) | MyPortofolio |
-| A | `hermes` | `85.211.245.219` | DNS only (grey) | VPS hermes |
-| A | `api` | `85.211.245.219` | DNS only (grey) | VPS api |
-
-> Delete/replace the old `A ardmst.my.id → 85.211.245.219 (DNS only)` and `A portofolio → 85.211.245.219 (DNS only)`. Vercel handles apex via CNAME flattening.
-
-### Vercel — MyPortofolio env vars
-Copy from VPS `/var/www/ardmst/.env.example` (placeholders below — fill real values in Vercel dashboard → Project → Settings → Environment Variables):
-
-```
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-NEXT_PUBLIC_APP_URL=https://portofolio.ardmst.my.id
-NEXT_PUBLIC_SUPABASE_BUCKET=portfolio-media
-LOCAL_ADMIN_EMAIL=admin@ardmst.local
-LOCAL_ADMIN_PASSWORD=***
-AUTH_SECRET=***
-```
-
-`ardmst-hub` needs no env vars.
-
-### Steps (dashboard)
-
-1. **Hub**: Vercel → Add New Project → Import `Ardmst/ardmst-hub` → Deploy → Settings → Domains → Add `ardmst.my.id` → Cloudflare CNAME as above → wait for Valid.
-2. **Portfolio**: Vercel → Add New Project → Import `Ardmst/MyPortofolio` → set env vars → Deploy → Domains → Add `portofolio.ardmst.my.id` → Cloudflare CNAME as above.
-3. Push hub if not yet on GitHub:
-   ```
-   cd ardmst-hub
-   git push -u origin main
-   # create repo first if needed: gh repo create Ardmst/ardmst-hub --public --source=. --remote=origin --push
-   ```
-4. Vercel CLI alternative (requires `vercel login`):
-   ```
-   vercel link --project ardmst-hub
-   vercel --prod
-   ```
-
-### Verification
-
-```bash
-curl -I https://ardmst.my.id
-curl -I https://portofolio.ardmst.my.id
-curl -I https://hermes.ardmst.my.id  # should hit VPS 85.211.245.219
-dig ardmst.my.id CNAME +short
-dig portofolio.ardmst.my.id CNAME +short
-dig hermes.ardmst.my.id A +short   # expect 85.211.245.219
-```
-
-Expect `200` + `x-vercel-*` headers for the two Vercel domains, VPS response for hermes/api.
+Vercel project `ardmst-hub`, domain `ardmst.my.id` (Cloudflare CNAME to `cname.vercel-dns.com`).
+`vercel.json` sets `X-Content-Type-Options`, `X-Frame-Options: DENY` and `Referrer-Policy`.
+The portfolio is a second Vercel project on `portofolio.ardmst.my.id`. Hermes and 9Router run
+on the VPS and are only linked from here.

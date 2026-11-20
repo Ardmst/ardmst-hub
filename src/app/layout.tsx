@@ -1,46 +1,91 @@
-import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import type { Metadata } from "next";
+import { EB_Garamond } from "next/font/google";
+import localFont from "next/font/local";
+import { SheetKit } from "@/components/SheetKit";
 import { SITE } from "@/lib/site";
-import "./globals.css";
+import "@/styles/theme.css";
+import "@/styles/sheet-kit.css";
+import "@/styles/site.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const grotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk", display: "swap" });
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
+/**
+ * theme.css and sheet-kit.css are verbatim copies of the workspace's shared files
+ * (one look for ardmst.my.id and portofolio.ardmst.my.id). This site's own rules are
+ * in site.css, loaded last.
+ */
+
+/**
+ * Bebas Neue, self-hosted from the @fontsource package (the same file Google Fonts serves)
+ * instead of next/font/google, for one reason: the face declares 0.95em of ascent and
+ * 0.35em of descent around capitals that are 0.7em tall, so every line of it carries an
+ * invisible box a quarter of an em above its letters. At 600px that box lay over the
+ * sentence and the button standing on the name and took their clicks. The overrides cut
+ * the box to the letters (0.7em up, 0.1em down). The baseline does not move: the box is
+ * trimmed equally about its centre.
+ */
+const bebasNeue = localFont({
+  src: "../../node_modules/@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2",
+  weight: "400",
+  style: "normal",
+  variable: "--font-display",
+  display: "swap",
+  declarations: [
+    { prop: "ascent-override", value: "70%" },
+    { prop: "descent-override", value: "10%" },
+    { prop: "line-gap-override", value: "0%" },
+  ],
+});
+
+/** EB Garamond, upright only: nothing on this page is set in italic, and a preloaded italic would cost 48 kB. */
+const garamond = EB_Garamond({
+  subsets: ["latin"],
+  style: ["normal"],
+  variable: "--font-text",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
-  title: "Ardmst — Rifkhi Ardi Mustaqim",
-  description: "Rifkhi Ardi Mustaqim — Fullstack Developer & Game Creator. Portfolio, links and contact at ardmst.my.id.",
-  keywords: ["Ardmst", "Rifkhi Ardi Mustaqim", "Fullstack Developer", "Game Creator", "Portfolio"],
-  authors: [{ name: SITE.fullName }],
-  icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
-    shortcut: "/icon.svg",
-  },
+  title: SITE.title,
+  description: SITE.description,
+  applicationName: SITE.name,
+  authors: [{ name: SITE.fullName, url: SITE.url }],
+  creator: SITE.fullName,
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: SITE.url,
+    url: "/",
     siteName: SITE.name,
-    title: "Ardmst — Rifkhi Ardi Mustaqim",
-    description: "Fullstack Developer & Game Creator — portfolio, GitHub, contact and more.",
+    title: SITE.title,
+    description: SITE.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ardmst — Rifkhi Ardi Mustaqim",
-    description: "Fullstack Developer & Game Creator — portfolio, GitHub, contact and more.",
+    title: SITE.title,
+    description: SITE.description,
   },
   robots: { index: true, follow: true },
 };
 
-export const viewport: Viewport = { themeColor: "#09090B", colorScheme: "dark" };
+// No theme-color: the visitor can turn the sheet dark, and a fixed white browser bar would
+// sit over a dark page. theme.css sets color-scheme with the theme instead.
+
+/**
+ * Runs before first paint: marks the document as scripted (`js`), so entrances only hide
+ * content when script really runs, and applies a stored dark theme without a flash.
+ * The OS preference is deliberately not followed.
+ */
+const HEAD = `(function(d){d.classList.add('js');try{if(localStorage.getItem('ardmst-theme')==='dark')d.dataset.theme='dark'}catch(e){}})(document.documentElement)`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${grotesk.variable} ${jetbrains.variable} dark`} suppressHydrationWarning>
-      <body className="min-h-dvh bg-void font-sans antialiased selection:bg-accent/35">
+    <html lang="en" className={`${bebasNeue.variable} ${garamond.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: HEAD }} />
+      </head>
+      <body>
         {children}
+        <SheetKit />
       </body>
     </html>
   );

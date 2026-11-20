@@ -1,0 +1,7 @@
+# The shared theme and the sheet kit are verbatim copies of the workspace's shared/ folder.
+# Keep their bytes exactly as they are (no end-of-line conversion), so a byte comparison
+# with shared/ stays true on every checkout.
+src/styles/theme.css -text
+src/styles/sheet-kit.css -text
+src/lib/sheet-kit.js -text
+src/lib/sheet-kit.d.ts -text
