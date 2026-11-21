@@ -49,7 +49,7 @@ export const LINKS: LinkItem[] = [
     note: "The work, and\u00a0demos you can open",
     picture: {
       src: "/doors/portfolio.webp",
-      alt: "Inside the portfolio: the pixel-art key art of Detektif Ekosistem beside the KicauScore live standings",
+      alt: "The first screen of the portfolio: the name ARDMST across the page above a portrait of Rifkhi Ardi Mustaqim",
     },
   },
   {

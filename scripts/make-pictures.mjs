@@ -5,7 +5,6 @@
 // Sources live outside this repo (the workspace root is the parent folder):
 //   ../portofolio/public/profile.jpg            the owner's portrait (1000x1250)
 //   ../media/hub/*.png                          public first screens, captured headless, GET only
-//   ../media/detektif, ../media/kicaumania      project pictures, used for the Portfolio row
 // Output: public/portrait-*.webp, public/doors/*.webp (640x400, 16:10), src/app/apple-icon.png
 // and src/app/favicon.ico.
 //
@@ -47,22 +46,10 @@ for (const width of [480, 800]) {
 
 // ---- the doors ------------------------------------------------------------------------------
 
-// Portfolio: the two pieces of work a visitor finds inside, side by side.
-// (Stand-in until the new portfolio's own first screen can be captured.)
-const half = { width: DOOR.width / 2, height: DOOR.height };
-const keyart = await sharp(join(media, "detektif", "detektif-art-menu-keyart.webp"))
-  .extract({ left: 96, top: 0, width: 576, height: 720 })
-  .resize(half.width, half.height, { kernel: "nearest" })
-  .toBuffer();
-const standings = await sharp(join(media, "kicaumania", "kicaumania-scoreboard-live-desktop.webp"))
-  .extract({ left: 112, top: 322, width: 462, height: 578 })
-  .resize(half.width, half.height)
-  .toBuffer();
+// Portfolio: its own first screen (1440x900, light), captured headless from the local
+// production build of ../portofolio and kept in ../media/hub/portfolio-first-screen.png.
 await save(
-  sharp({ create: { width: DOOR.width, height: DOOR.height, channels: 3, background: "#ffffff" } }).composite([
-    { input: keyart, left: 0, top: 0 },
-    { input: standings, left: half.width, top: 0 },
-  ]),
+  door(join(media, "hub", "portfolio-first-screen.png"), { left: 0, top: 0, width: 1440, height: 900 }),
   out("public", "doors", "portfolio.webp"),
   82,
 );

@@ -222,6 +222,18 @@ h2, .head { font-size: var(--step-head); }
 }
 .bar a { text-decoration: none; }
 .bar a:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+/*
+ * Each word in the bar is a 44px target to the hand. The padding is taken back by an equal
+ * negative margin, so nothing moves; the focus ring is drawn inside the target, clear of the
+ * top edge of the screen.
+ */
+.bar a,
+.bar__theme {
+  padding: 0.75rem 0.5rem;
+  margin: -0.75rem -0.5rem;
+}
+.bar a:focus-visible,
+.bar__theme:focus-visible { outline-offset: -3px; }
 .bar__mark { font-weight: 500; }
 .bar__links { display: flex; gap: clamp(1rem, 2.4vw, 2.25rem); }
 
@@ -255,7 +267,6 @@ h2, .head { font-size: var(--step-head); }
 .bar__theme {
   background: none;
   border: 0;
-  padding: 0;
   cursor: pointer;
   font: inherit;
   color: inherit;
@@ -304,6 +315,9 @@ h2, .head { font-size: var(--step-head); }
 .row__note { font-size: var(--step-body); text-align: right; max-width: 28ch; }
 a.row:hover,
 a.row:focus-visible { background: var(--sky); color: var(--sky-ink); padding-left: calc(var(--margin) * 2); }
+/* a row runs edge to edge: its focus ring is drawn inside it; pressed, it takes the deeper blue */
+a.row:focus-visible { outline-offset: -3px; }
+a.row:active { background: var(--bloom-3); }
 
 /* ---- the close: invitation over the cropped name ---------------------------
  * The same footer on both sites, complete here:

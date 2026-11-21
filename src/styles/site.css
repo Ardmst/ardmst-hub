@@ -20,17 +20,6 @@
   --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-/* ---- the bar: larger targets, the same look ------------------------------------------- */
-
-.bar a,
-.bar__theme {
-  padding-block: 0.8rem;
-  margin-block: -0.8rem;
-  transition: opacity var(--dur-fast) var(--ease);
-}
-.bar a:active,
-.bar__theme:active { opacity: 0.55; }
-
 /* ---- the first screen ------------------------------------------------------------------ */
 
 /*
@@ -148,7 +137,6 @@
 }
 .doors a.row:hover,
 .doors a.row:focus-visible { padding-left: var(--margin); }
-.doors a.row:focus-visible { outline-offset: -3px; }
 
 .doors .row__name { transition: translate var(--dur) var(--ease); }
 /* pretty, not balance: a balanced note broke after "and"; the notes carry no-break spaces where two words belong together */
@@ -167,10 +155,10 @@
 .doors .row__pic > img { transition: transform 700ms var(--ease-soft), opacity 200ms linear; }
 
 @media (hover: hover) and (pointer: fine) {
-  .doors a.row:hover .row__name { translate: calc(var(--margin) * 0.75) 0; }
+  .doors a.row:hover .row__name { translate: var(--margin) 0; }
   .doors a.row:hover .row__pic > img { transform: scale(1.06); }
 }
-.doors a.row:focus-visible .row__name { translate: calc(var(--margin) * 0.75) 0; }
+.doors a.row:focus-visible .row__name { translate: var(--margin) 0; }
 .doors a.row:active .row__name { translate: calc(var(--margin) * 0.4) 0; transition-duration: var(--dur-fast); }
 
 /*
