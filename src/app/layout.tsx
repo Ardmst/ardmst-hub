@@ -21,13 +21,18 @@ import "@/styles/site.css";
  * sentence and the button standing on the name and took their clicks. The overrides cut
  * the box to the letters (0.7em up, 0.1em down). The baseline does not move: the box is
  * trimmed equally about its centre.
+ *
+ * display "block", not "swap": the name is fitted to the screen by this face's measured
+ * width, and any fallback face is nearly twice as wide, so a swap painted ARDMS cut off by
+ * the right edge until the file arrived. Blocked, the name waits (three seconds at most)
+ * and arrives right; the sentence, the button and the portrait do not wait for it.
  */
 const bebasNeue = localFont({
   src: "../../node_modules/@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2",
   weight: "400",
   style: "normal",
   variable: "--font-display",
-  display: "swap",
+  display: "block",
   declarations: [
     { prop: "ascent-override", value: "70%" },
     { prop: "descent-override", value: "10%" },

@@ -14,8 +14,9 @@ export default function NotFound() {
           ardmst
         </a>
         <nav className="bar__links" aria-label="Main">
-          <button className="bar__theme" type="button" data-theme-toggle aria-pressed="false">
-            Dark
+          <button className="bar__theme" type="button" data-theme-toggle>
+            <span className="bar__to-dark">Dark</span>
+            <span className="bar__to-light">Light</span>
           </button>
         </nav>
       </header>

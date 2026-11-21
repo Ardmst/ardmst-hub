@@ -17,6 +17,8 @@ export const SITE = {
   github: "https://github.com/Ardmst",
   linkedin: "https://linkedin.com/in/ardmst",
   email: "contact@ardmst.my.id",
+  /** The invitation in the close opens a letter that already has its subject. */
+  inquiry: "mailto:contact@ardmst.my.id?subject=Project%20inquiry",
   title: "Ardmst — every site by Rifkhi Ardi Mustaqim",
   description:
     "Rifkhi Ardi Mustaqim (ardmst) builds web apps and games in Indonesia. This page is the door to every site he runs: his portfolio, his tools, GitHub, LinkedIn and email.",
@@ -28,7 +30,11 @@ export type LinkItem = {
   /** The row's name, set in capitals at display size. Keep it to one or two words. */
   name: string;
   href: string;
-  /** One short line: what is behind the door. Say so when it needs a sign-in. */
+  /**
+   * One short line: what is behind the door. Say so when it needs a sign-in.
+   * A no-break space (\u00a0) keeps two words on one line where the note wraps, and a
+   * word joiner (\u2060) after a hyphen stops the line breaking there.
+   */
   note: string;
   /** The destination's picture: a 640x400 (16:10) WebP in `public/doors/`. */
   picture: { src: string; alt: string };
@@ -40,7 +46,7 @@ export const LINKS: LinkItem[] = [
   {
     name: "Portfolio",
     href: SITE.portfolio,
-    note: "The work, and demos you can open",
+    note: "The work, and\u00a0demos you can open",
     picture: {
       src: "/doors/portfolio.webp",
       alt: "Inside the portfolio: the pixel-art key art of Detektif Ekosistem beside the KicauScore live standings",
@@ -49,14 +55,14 @@ export const LINKS: LinkItem[] = [
   {
     name: "Hermes",
     href: "https://hermes.ardmst.my.id",
-    note: "Private assistant. Sign-in required",
+    note: "Private assistant. Sign-\u2060in\u00a0required",
     picture: { src: "/doors/hermes.webp", alt: "The Hermes sign-in screen: a lock, the name and one password field" },
     newTab: true,
   },
   {
     name: "9Router",
     href: "https://router.ardmst.my.id",
-    note: "AI gateway console. Sign-in required",
+    note: "AI gateway console. Sign-\u2060in\u00a0required",
     picture: { src: "/doors/router.webp", alt: "The 9Router sign-in screen: the name over one password field" },
     newTab: true,
   },

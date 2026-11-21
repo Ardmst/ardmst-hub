@@ -23,8 +23,10 @@ export default function Page() {
             GitHub
           </a>
           <a href={`mailto:${SITE.email}`}>Email</a>
-          <button className="bar__theme" type="button" data-theme-toggle aria-pressed="false">
-            Dark
+          {/* Both words are here and theme.css shows one, so the word is right before script runs. */}
+          <button className="bar__theme" type="button" data-theme-toggle>
+            <span className="bar__to-dark">Dark</span>
+            <span className="bar__to-light">Light</span>
           </button>
         </nav>
       </header>
@@ -37,7 +39,7 @@ export default function Page() {
               <p className="lead hero__lead">
                 <span>{SITE.lead[0]}</span> <span>{SITE.lead[1]}</span>
               </p>
-              <a className="button hero__go" href={SITE.portfolio}>
+              <a className="button hero__go" href={SITE.portfolio} data-biro-ink="var(--accent-ink)">
                 See the portfolio
               </a>
             </div>
@@ -45,7 +47,7 @@ export default function Page() {
               <img
                 src="/portrait-800.webp"
                 srcSet="/portrait-480.webp 480w, /portrait-800.webp 800w"
-                sizes="(max-width: 720px) 92vw, 34vw"
+                sizes="(max-width: 720px) 92vw, (orientation: portrait) 96vw, 24vw"
                 width={800}
                 height={1000}
                 alt="Rifkhi Ardi Mustaqim in round glasses, photographed in black and white under a tree"
@@ -61,7 +63,9 @@ export default function Page() {
           </div>
         </section>
 
-        {/* The doors. Each row carries its picture; on a mouse the pointer holds it larger. */}
+        {/* The doors. Each row carries its picture. On a mouse the pointer picks it up: it is
+            held, larger, in the free stretch between the row's name and its note (the kit's
+            "gap" placement), so it never lies on a neighbouring row. */}
         <section className="doors" id="doors" aria-labelledby="doors-title">
           <h2 id="doors-title" className="doors__title" data-rise>
             Every door, one page
@@ -74,6 +78,7 @@ export default function Page() {
                 href={link.href}
                 {...(link.newTab ? { target: "_blank", rel: "noopener" } : {})}
                 data-biro="preview"
+                data-biro-place="gap"
                 data-biro-src={link.picture.src}
                 data-biro-alt={link.picture.alt}
                 data-biro-ratio="16 / 10"
@@ -101,7 +106,7 @@ export default function Page() {
             <h2 className="close__say" data-rise>
               Have something that needs building?
             </h2>
-            <a className="button close__go" href={`mailto:${SITE.email}`} data-rise style={step(1)}>
+            <a className="button close__go" href={SITE.inquiry} data-biro-ink="var(--field-1)" data-rise style={step(1)}>
               Write to me
             </a>
           </div>
@@ -131,7 +136,7 @@ export default function Page() {
           </p>
           <div className="close__legal">
             <span>© 2026 {SITE.fullName}</span>
-            <span>Set in Bebas Neue and EB Garamond</span>
+            <span>{SITE.email}</span>
           </div>
           <p className="monument" aria-hidden="true">
             ARDMST

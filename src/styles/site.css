@@ -4,37 +4,20 @@
  * shared files and are never edited here. Every colour and every type size is a theme token.
  *
  * The page has three parts: the first screen (the portrait and the sentence stand on the
- * name), the doors (display rows, each with its picture) and the close.
+ * name), the doors (display rows, each with its picture) and the close. The close is the
+ * shared one and is wholly in theme.css.
  * No section sets a background of its own unless it is a field: the dot sheet shows through.
  */
 
 :root {
   /* The bar's height: its padding twice and one line of its text (see .bar in theme.css). */
   --bar-h: calc(2 * clamp(0.9rem, 1.6vw, 1.5rem) + 1.2 * var(--step-body));
-  /*
-   * ARDMST set in Bebas Neue at -0.035em, measured by scanning the drawn glyphs: the ink
-   * starts 0.0125em inside the line box and ends at 2.2975em, so it is 2.285em wide (the
-   * tracked box is 2.274em: the T overhangs it). A name fitted to its box is sized as
-   * box width / --name-fit  and pulled left by --name-left, so the ink runs margin to margin.
-   */
-  --name-fit: 2.285;
-  --name-left: 0.0125em;
   /* The gap between the name's cap line and what stands on it. */
   --stand: clamp(1.25rem, 2.2vw, 2rem);
+  /* The least the row above the name can be: the portrait at its smallest, and the row's own padding. */
+  --hero-top-min: calc(11.5rem + var(--stand));
   --ease-wipe: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
 }
 
 /* ---- the bar: larger targets, the same look ------------------------------------------- */
@@ -61,6 +44,8 @@
   min-height: 100vh; /* taste-skill-ignore: only for browsers without svh; the next line replaces it */
   min-height: 100svh;
   padding: var(--bar-h) var(--margin) 0;
+  /* the space set after the last letter may run past the margin on a short, wide window: it is empty, and cut here */
+  overflow-x: clip;
 }
 
 .hero__top {
@@ -104,15 +89,38 @@
 }
 
 /*
- * The name, fitted to the content box by measurement: one line from margin to margin.
- * The line box is 0.8em with the baseline 0.1em above its foot (Bebas Neue), so the
- * bottom margin puts the feet exactly one page margin above the edge.
+ * The name, fitted to the content box by measurement (--name-fit, theme.css): one line
+ * from margin to margin. The line box is 0.8em with the baseline 0.1em above its foot
+ * (Bebas Neue), so the bottom margin puts the feet exactly one page margin above the edge.
  * Without container units the theme's own size stands.
  */
 .hero__name { container-type: inline-size; }
 .hero .monument {
   font-size: calc(100cqw / var(--name-fit));
   margin: 0 0 calc(var(--margin) - 0.1em) calc(-1 * var(--name-left));
+}
+
+/*
+ * A wide, short window (a laptop with its browser bars showing) cannot hold a name as wide
+ * as itself: the letters alone would be taller than the room left under the bar and the
+ * sentence, and the fold would cut their feet. There the height sets the size (the capitals
+ * are 0.7em tall) and the letters are set apart, so the ink still runs margin to margin
+ * and the feet still rest one margin above the edge. Six letters have five gaps, and the
+ * measured width already holds five of -0.035em: hence (fit + 0.175) below.
+ * Never smaller than two thirds of the fitted size: a flatter window scrolls instead.
+ */
+@supports (height: 100svh) {
+  @media (min-width: 721px) and (orientation: landscape) {
+    .hero .monument {
+      --name-size: clamp(
+        100cqw / 3.4,
+        (100svh - var(--bar-h) - var(--hero-top-min) - var(--margin)) / 0.7,
+        100cqw / var(--name-fit)
+      );
+      font-size: var(--name-size);
+      letter-spacing: calc((100cqw - (var(--name-fit) + 0.175) * var(--name-size)) / 5);
+    }
+  }
 }
 
 /* ---- the doors ----------------------------------------------------------------------------- */
@@ -143,12 +151,20 @@
 .doors a.row:focus-visible { outline-offset: -3px; }
 
 .doors .row__name { transition: translate var(--dur) var(--ease); }
-.doors .row__note { justify-self: end; max-width: 36ch; text-wrap: balance; }
+/* pretty, not balance: a balanced note broke after "and"; the notes carry no-break spaces where two words belong together */
+.doors .row__note { justify-self: end; max-width: 36ch; text-wrap: pretty; }
+/*
+ * Each picture is mounted on a tone step, so a dark screen keeps an edge on a dark ground
+ * and a black one does not sit raw on the white sheet: the mount is the surface tone on
+ * the open sheet and the sheet's own tone on the banded rows.
+ */
 .doors .row__pic {
   display: block;
   aspect-ratio: 16 / 10;
+  border: 0.5rem solid var(--surface);
 }
-.doors .row__pic > img { transition: transform 700ms var(--ease-soft); }
+.doors .row:nth-child(even) .row__pic { border-color: var(--bg); }
+.doors .row__pic > img { transition: transform 700ms var(--ease-soft), opacity 200ms linear; }
 
 @media (hover: hover) and (pointer: fine) {
   .doors a.row:hover .row__name { translate: calc(var(--margin) * 0.75) 0; }
@@ -157,83 +173,13 @@
 .doors a.row:focus-visible .row__name { translate: calc(var(--margin) * 0.75) 0; }
 .doors a.row:active .row__name { translate: calc(var(--margin) * 0.4) 0; transition-duration: var(--dur-fast); }
 
-/* ---- the close ------------------------------------------------------------------------------
- * The same close as the portfolio: the invitation and one button, a few links, the name
- * with its dropped letters, the legal row, the cropped name.
- * theme.css gives the field, the legal row and the cropped name; the rest is here.
- */
-
-/* clip, not hidden: a hidden box would become the scroller the name's timeline watches */
-.close { overflow: clip; }
-
-.close__top {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--gap);
-  row-gap: 2.5rem;
-  padding-inline: var(--margin);
-}
-.close__ask {
-  grid-column: 1 / span 8;
-  display: grid;
-  gap: clamp(1.5rem, 2.4vw, 2.25rem);
-  justify-items: start;
-}
-.close__say { max-width: 10.5em; }
-
-/* On the field the one button takes the field's own ink: light on the dark close, in both themes. */
-.close .button {
-  background: var(--field-1-ink);
-  color: var(--field-1);
-}
-.close .button:hover { background: var(--bloom-2); }
-
-.close__links {
-  grid-column: 10 / -1;
-  display: grid;
-  align-content: start;
-  justify-items: start;
-}
-/* each link is 44px tall to the hand; the lines still read as a tight stack */
-.close__links a {
-  display: inline-block;
-  padding-block: 0.7rem;
-  margin-block: -0.35rem;
-  text-decoration: underline;
-  text-decoration-thickness: 0.06em;
-  text-underline-offset: 0.2em;
-  transition: text-decoration-thickness var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
-}
-.close__links a:hover { text-decoration-thickness: 0.14em; }
-.close__links a:active { opacity: 0.6; }
-
-.close__foot {
-  container-type: inline-size;
-  margin-top: clamp(3rem, 7vw, 6.5rem);
-}
-
-/* ARDI MUSTAQIM at the heading size: the letters the handle dropped are in the soft ink. */
-.close__derive {
-  padding-inline: var(--margin);
-  font-family: var(--font-display), "Bebas Neue", "Arial Narrow", Impact, sans-serif;
-  font-size: var(--step-head);
-  line-height: var(--lead-display);
-  letter-spacing: var(--track-display);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.close__drop { color: var(--field-1-soft); }
-.close__legal { margin-top: 0.9rem; }
-
 /*
- * The cropped name, fitted like the one on the first screen and cut by the bottom edge:
- * its box ends 0.5em below the cap line, so about seven tenths of each letter shows.
+ * While the pointer holds a row's picture (the kit marks the row), the row's own copy
+ * steps out of its mount: the picture is in one place, never two.
  */
-.close .monument {
-  font-size: calc((100cqw - 2 * var(--margin)) / var(--name-fit));
-  transform: none;
-  margin: clamp(0.9rem, 1.6vw, 1.5rem) 0 -0.3em calc(var(--margin) - var(--name-left));
-}
+.doors a.row[data-biro-held] .row__pic > img { opacity: 0; }
+/* The held picture stands beside the name: the name stays where the kit measured it. */
+.doors a.row[data-biro-held]:hover .row__name { translate: 0 0; }
 
 /* ---- the 404 page: one line and the way back ------------------------------------------------ */
 
@@ -249,9 +195,9 @@
 .lost__title { font-size: var(--step-head); }
 
 /* ---- motion ----------------------------------------------------------------------------------
- * Transform (and its parts, translate and scale), opacity and clip-path, plus one change
- * of colour in the close. Every starting state sits inside no-preference and behind `.js`,
- * so the reduced page and the page without script are the finished page.
+ * Transform (and its parts, translate and scale), opacity and clip-path. Every starting
+ * state sits inside no-preference and behind `.js`, so the reduced page and the page
+ * without script are the finished page. The close's own motion is in theme.css.
  */
 
 @keyframes hero-name { from { opacity: 0; transform: translateY(0.05em); } }
@@ -259,7 +205,6 @@
 @keyframes hero-open { from { clip-path: inset(100% 0 0 0); } }
 @keyframes hero-settle { from { scale: 1.12; } }
 @keyframes portrait-drift { to { translate: 0 -7.4%; } }
-@keyframes name-up { from { translate: 0 16%; } }
 
 @media (prefers-reduced-motion: no-preference) {
   /* The first screen arrives in a second, without waiting for script: the name, the
@@ -281,7 +226,10 @@
   .js .doors .row__pic[data-rise].is-in { clip-path: inset(0); }
   .js .doors .row__pic[data-rise] > img {
     scale: 1.12;
-    transition: transform 700ms var(--ease-soft), scale 1500ms var(--ease-soft) calc(var(--i, 0) * 75ms);
+    transition:
+      transform 700ms var(--ease-soft),
+      opacity 200ms linear,
+      scale 1500ms var(--ease-soft) calc(var(--i, 0) * 75ms);
   }
   .js .doors .row__pic[data-rise].is-in > img { scale: 1; }
 
@@ -292,13 +240,6 @@
       transform var(--dur-slow) var(--ease),
       translate var(--dur) var(--ease);
   }
-
-  /* The derivation: the whole name arrives, then the letters the handle dropped fall back. */
-  .js .close__derive[data-rise] .close__drop {
-    color: inherit;
-    transition: color 700ms ease 450ms;
-  }
-  .js .close__derive[data-rise].is-in .close__drop { color: var(--field-1-soft); }
 }
 
 /* Scroll-linked, on the compositor, where the browser has scroll timelines; still without them. */
@@ -315,13 +256,6 @@
       animation-timeline: auto, scroll(root block);
       animation-range: normal, 0 100svh;
     }
-    /* The cropped name comes up to its place as the close enters. Its box runs 0.3em past
-       the end of the page, so it is never more than 62% in view: the move ends at 60%. */
-    .close .monument {
-      animation: name-up linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 60%;
-    }
   }
 }
 
@@ -332,11 +266,19 @@
   .hero__lead > span { display: block; }
 }
 
+/* ---- narrower rows: the note needs the room more than the name does ------------------------ */
+
+@media (max-width: 1100px) {
+  .doors .row { grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) clamp(11.5rem, 15.5vw, 15rem); }
+}
+
 /* ---- upright screens and phones: the first screen stacks ----------------------------------- */
 
 /*
  * Where the screen is taller than wide, or narrow, the sentence and the button hang from
- * the bar and the portrait fills what is left below them, standing on the name.
+ * the bar and the portrait takes everything left below them, standing on the name: its
+ * frame runs margin to margin at whatever height the screen leaves, and the photograph
+ * is cropped to it (on the face: the middle of the picture, a little above centre).
  */
 @media (max-width: 720px), (orientation: portrait) {
   .hero__top {
@@ -349,13 +291,15 @@
   .hero__lead { max-width: 34ch; }
   .hero__portrait {
     grid-column: 1;
-    max-height: min(42rem, calc((100vw - 2 * var(--margin)) * 1.25));
+    justify-self: stretch;
+    width: 100%;
+    aspect-ratio: auto;
+    max-height: none;
   }
-  /* The close is as tall as what it holds: a full upright screen of it would be mostly empty field. */
-  .close { min-height: 0; }
+  .hero__portrait > img { object-position: 50% 33%; }
 }
 
-/* ---- phone: its own rows and close ------------------------------------------------------- */
+/* ---- phone: its own rows ------------------------------------------------------------------- */
 
 @media (max-width: 720px) {
   /* A row: the name over its note on the margin, the picture beside them. */
@@ -368,17 +312,7 @@
     padding-block: 1rem;
   }
   .doors .row__name { grid-area: name; }
-  .doors .row__note { grid-area: note; justify-self: start; max-width: none; }
-  .doors .row__pic { grid-area: pic; }
-
-  .close__foot { margin-top: 4.5rem; }
-  .close__ask,
-  .close__links { grid-column: 1 / -1; }
-  .close__ask .button { width: 100%; }
-  .close__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 1.5rem;
-  }
-  .close__links a { margin-block: 0; }
+  /* an address is one unbreakable word: on the narrowest phones it may break anywhere rather than run under the picture */
+  .doors .row__note { grid-area: note; justify-self: start; max-width: none; overflow-wrap: anywhere; }
+  .doors .row__pic { grid-area: pic; border-width: 0.375rem; }
 }
